@@ -7,14 +7,6 @@ from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
 import json, csv, io, os
 from datetime import datetime
-from flask import send_file 
-
-@app.route('/examen') 
-def serve_examen(): 
-    return send_file('examen.html') 
-@app.route('/enseignant') 
-def serve_enseignant(): 
-    return send_file('enseignant.html')
 
 app = Flask(__name__)
 CORS(app)
