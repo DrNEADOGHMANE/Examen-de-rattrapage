@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espace Enseignant — TEC</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--blue:#1a56db;--blue-light:#e8f0fe;--green:#057a55;--green-light:#def7ec;--red:#c81e1e;--red-light:#fde8e8;--amber:#92400e;--amber-light:#fef3c7;--gray:#6b7280;--border:#e5e7eb;--bg:#f9fafb;--white:#ffffff;--text:#111827;--text-muted:#6b7280;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  header{background:var(--white);border-bottom:1px solid var(--border);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+  .logo{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;color:var(--amber);}
+  .badge{background:var(--amber-light);color:var(--amber);font-size:12px;padding:4px 12px;border-radius:6px;font-weight:500;}
+  .container{max-width:1000px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  .page-title{font-size:22px;font-weight:600;margin-bottom:4px;}
+  .page-sub{font-size:14px;color:var(--text-muted);margin-bottom:1rem;}
+  .info-box{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 14px;font-size:12px;color:#1e40af;margin-bottom:1.5rem;line-height:1.6;}
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem;}
+  .stat-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;}
+  .stat-val{font-size:26px;font-weight:600;font-family:'IBM Plex Mono',monospace;}
+  .stat-lbl{font-size:12px;color:var(--text-muted);margin-top:2px;}
+  .control-panel{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+  .control-left{flex:1;min-width:200px;}
+  .control-left h3{font-size:15px;font-weight:600;margin-bottom:3px;}
+  .control-left p{font-size:13px;color:var(--text-muted);}
+  .status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle;}
+  .dot-open{background:var(--green);box-shadow:0 0 0 3px rgba(5,122,85,.2);}
+  .dot-closed{background:var(--red);}
+  .dot-waiting{background:var(--gray);}
+  .status-label{font-size:13px;font-weight:500;}
+  .control-btns{display:flex;gap:8px;flex-wrap:wrap;}
+  .btn{height:36px;padding:0 14px;border-radius:8px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--white);color:var(--text);white-space:nowrap;}
+  .btn:hover{opacity:.88;}
+  .btn-green{background:var(--green);color:white;border-color:var(--green);}
+  .btn-pause{background:#fef3c7;color:#92400e;border-color:#fcd34d;}
+  .btn-stop{background:var(--red);color:white;border-color:var(--red);}
+  .btn-reset{background:#f3f4f6;color:#374151;border-color:#d1d5db;}
+  .toolbar{display:flex;gap:10px;margin-bottom:1rem;flex-wrap:wrap;align-items:center;}
+  .search-input{flex:1;min-width:180px;height:36px;border:1px solid var(--border);border-radius:8px;padding:0 12px;font-size:14px;font-family:'IBM Plex Sans',sans-serif;background:var(--white);color:var(--text);}
+  .filter-select{height:36px;border:1px solid var(--border);border-radius:8px;padding:0 10px;font-size:13px;font-family:'IBM Plex Sans',sans-serif;background:var(--white);color:var(--text);}
+  .copies-table{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:auto;}
+  table{width:100%;border-collapse:collapse;min-width:700px;}
+  thead{background:var(--bg);}
+  th{padding:10px 12px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);border-bottom:1px solid var(--border);}
+  td{padding:11px 12px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:#f8fafc;}
+  .score-pill{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;padding:3px 8px;border-radius:20px;}
+  .score-high{background:var(--green-light);color:var(--green);}
+  .score-mid{background:var(--amber-light);color:var(--amber);}
+  .score-low{background:var(--red-light);color:var(--red);}
+  .detail-btn{background:var(--blue-light);color:var(--blue);border:none;border-radius:6px;padding:4px 10px;font-size:12px;font-family:'IBM Plex Sans',sans-serif;cursor:pointer;font-weight:500;}
+  .del-btn{background:var(--red-light);color:var(--red);border:none;border-radius:6px;padding:4px 8px;font-size:12px;font-family:'IBM Plex Sans',sans-serif;cursor:pointer;margin-left:4px;}
+  .empty-state{text-align:center;padding:3rem 2rem;color:var(--text-muted);}
+  .empty-state h3{font-size:16px;margin-bottom:8px;color:var(--text);}
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;overflow-y:auto;padding:2rem 1rem;}
+  .modal{background:var(--white);border-radius:14px;max-width:700px;margin:0 auto;}
+  .modal-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+  .modal-header h2{font-size:17px;font-weight:600;}
+  .close-btn{background:none;border:none;font-size:22px;cursor:pointer;color:var(--text-muted);}
+  .modal-body{padding:1.5rem;}
+  .detail-section{margin-bottom:1.5rem;}
+  .detail-section h3{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+  .info-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+  .info-item{font-size:13px;}
+  .info-item span{color:var(--text-muted);display:block;font-size:11px;margin-bottom:2px;}
+  .ans-row{padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;}
+  .ans-row:last-child{border-bottom:none;}
+  .ans-q{font-weight:500;margin-bottom:6px;}
+  .opt-row{display:flex;align-items:center;gap:8px;font-size:12px;padding:3px 0;color:var(--text-muted);}
+  .opt-correct{color:var(--green);font-weight:500;}
+  .opt-wrong{color:var(--red);}
+  .pwd-overlay{position:fixed;inset:0;background:#111827;z-index:999;display:flex;align-items:center;justify-content:center;padding:1rem;}
+  .pwd-card{background:var(--white);border-radius:16px;max-width:360px;width:100%;padding:2.5rem 2rem;text-align:center;}
+  .pwd-card h2{font-size:20px;font-weight:600;margin-bottom:6px;}
+  .pwd-card p{font-size:13px;color:var(--text-muted);margin-bottom:1.5rem;}
+  .pwd-input{width:100%;height:44px;border:1.5px solid var(--border);border-radius:10px;padding:0 14px;font-size:16px;font-family:'IBM Plex Mono',monospace;text-align:center;letter-spacing:.1em;margin-bottom:12px;}
+  .pwd-input:focus{outline:none;border-color:var(--amber);}
+  .pwd-input.error{border-color:var(--red);animation:shake .3s ease;}
+  .pwd-btn{width:100%;height:46px;background:var(--amber);color:white;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;}
+  .pwd-error{font-size:12px;color:var(--red);margin-top:8px;display:none;}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-8px);}75%{transform:translateX(8px);}}
+  @media(max-width:600px){.stats-row{grid-template-columns:1fr 1fr;}.info-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="pwd-overlay" id="pwd-overlay">
+  <div class="pwd-card">
+    <div style="font-size:40px;margin-bottom:1rem;">🔐</div>
+    <h2>Espace Enseignant</h2>
+    <p>Entrez le mot de passe pour accéder.</p>
+    <input class="pwd-input" type="password" id="pwd-input" placeholder="••••••••" onkeydown="if(event.key==='Enter') checkPassword()"/>
+    <button class="pwd-btn" onclick="checkPassword()">Accéder</button>
+    <div class="pwd-error" id="pwd-error">Mot de passe incorrect.</div>
+  </div>
+</div>
+
+
+<div style="background:#fff;border-bottom:3px solid #1a56db;padding:14px 2rem;display:flex;align-items:center;gap:1.5rem;">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Badji_Mokhtar_Annaba_University_logo.svg/120px-Badji_Mokhtar_Annaba_University_logo.svg.png" 
+       onerror="this.style.display='none'"
+       style="height:64px;width:auto;flex-shrink:0;" alt="Logo UBMA"/>
+  <div style="font-family:'IBM Plex Sans',sans-serif;line-height:1.5;">
+    <div style="font-size:15px;font-weight:700;color:#1a56db;">Badji Mokhtar Annaba University</div>
+    <div style="font-size:13px;font-weight:600;color:#111827;">Faculty of Technology</div>
+    <div style="font-size:13px;color:#374151;">TC Sciences et Technologie &mdash; 2&egrave;me Ann&eacute;e</div>
+    <div style="font-size:13px;color:#6b7280;font-style:italic;">Dr. N. E. A. DOGHMANE</div>
+  </div>
+</div>
+<header>
+  <div class="logo">EXAM · TEC · ESPACE ENSEIGNANT</div>
+  <div class="badge">Accès enseignant</div>
+</header>
+
+<div class="container">
+  <div class="page-title">Copies des étudiants</div>
+  <div class="page-sub">Examen — Techniques d'Expression et de Communication · 15 QCM + 1 question ouverte · 20 pts</div>
+
+  <div class="info-box">
+    🌐 <strong>Mode réseau (ngrok)</strong> — Le statut et les copies sont stockés sur le serveur Flask.
+    Partagez le lien ngrok aux étudiants. Toutes les copies arrivent ici en temps réel.
+  </div>
+
+  <div class="control-panel">
+    <div class="control-left">
+      <h3>Contrôle de l'examen</h3>
+      <p>Statut : <span class="status-dot dot-waiting" id="status-dot"></span><span class="status-label" id="status-label">En attente</span></p>
+    </div>
+    <div class="control-btns">
+      <button class="btn btn-green" onclick="publishExam()">▶ Publier l'examen</button>
+      <button class="btn btn-pause" id="pause-btn" onclick="pauseExam()">⏸ Pause</button>
+      <button class="btn btn-stop" onclick="stopExam()">⏹ Arrêter</button>
+      <button class="btn btn-reset" onclick="resetExam()">↺ Non ouvert</button>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-val" id="stat-total">0</div><div class="stat-lbl">Copies reçues</div></div>
+    <div class="stat-card"><div class="stat-val" id="stat-avg">—</div><div class="stat-lbl">Moyenne / 20</div></div>
+    <div class="stat-card"><div class="stat-val" id="stat-max">—</div><div class="stat-lbl">Meilleure note</div></div>
+    <div class="stat-card"><div class="stat-val" id="stat-min">—</div><div class="stat-lbl">Note la plus basse</div></div>
+  </div>
+
+  <div class="toolbar">
+    <input type="text" class="search-input" id="search" placeholder="Rechercher nom / matricule..." oninput="render()"/>
+    <select class="filter-select" id="filter-filiere" onchange="render()">
+      <option value="">Toutes les filières</option>
+      <option>AUTOMATIQUE</option><option>ELECTRONIQUE</option><option>TELECOMMUNICATION</option>
+      <option>ELECTROTECHNIQUE</option><option>ELECTROMECANIQUE</option><option>GENIE CIVIL</option>
+      <option>GENIE MECANIQUE</option><option>HYDRAULIQUE</option>
+      <option>HYGIENE ET SECURITE INDUSTRIELLE</option><option>GENIE DES PROCEDES</option><option>METALLURGIE</option>
+    </select>
+    <button class="btn" onclick="loadAndRender()">↻ Actualiser</button>
+    <button class="btn" onclick="exportCSV()">⬇ Exporter CSV</button>
+    <button class="btn btn-stop" onclick="clearAllCopies()">🗑 Vider copies</button>
+  </div>
+
+  <div class="copies-table">
+    <table>
+      <thead>
+        <tr><th>#</th><th>Nom</th><th>Matricule</th><th>Filière</th><th>Groupe</th><th>Date</th><th>Score /20</th><th>Actions</th></tr>
+      </thead>
+      <tbody id="copies-body"></tbody>
+    </table>
+    <div class="empty-state" id="empty-state">
+      <h3>Aucune copie reçue</h3>
+      <p>Les copies apparaîtront ici dès que les étudiants soumettront l'examen.</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modal-title">Détail de la copie</h2>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="detail-btn" onclick="downloadCopy(currentModal)" style="font-size:13px;padding:6px 14px;">⬇ Télécharger</button>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+const API_BASE = 'https://examen-jhpf.onrender.com'; // ← Remplacez par votre URL Render
+const PASSWORD = 'Ahlemyouya';
+let copies = [], currentStatus = 'none';
+
+// ── Mot de passe ───────────────────────────────────────────────────
+function checkPassword() {
+  const val = document.getElementById('pwd-input').value;
+  if (val === PASSWORD) {
+    document.getElementById('pwd-overlay').style.display = 'none';
+    loadAndRender();
+  } else {
+    const inp = document.getElementById('pwd-input');
+    inp.classList.add('error');
+    document.getElementById('pwd-error').style.display = 'block';
+    inp.value = '';
+    setTimeout(() => inp.classList.remove('error'), 400);
+  }
+}
+
+// ── Statut via API ─────────────────────────────────────────────────
+async function getStatus() {
+  try {
+    const res = await fetch(API_BASE + '/api/status');
+    const data = await res.json();
+    return data.status || 'none';
+  } catch(e) { return currentStatus; }
+}
+
+async function setStatus(s) {
+  try {
+    await fetch(API_BASE + '/api/status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: s })
+    });
+    currentStatus = s;
+    updateStatusDisplay(s);
+  } catch(e) { alert('Erreur serveur lors du changement de statut.'); }
+}
+
+async function updateStatusDisplay(s) {
+  if (!s) s = await getStatus();
+  currentStatus = s;
+  const dot = document.getElementById('status-dot');
+  const lbl = document.getElementById('status-label');
+  const pb  = document.getElementById('pause-btn');
+  const cfg = {
+    open:    { cls:'dot-open',    txt:'Examen ouvert — les étudiants peuvent accéder', col:'var(--green)', pbTxt:'⏸ Pause',    pbCls:'btn btn-pause' },
+    paused:  { cls:'dot-waiting', txt:'Examen en pause',                               col:'#92400e',      pbTxt:'▶ Reprendre',pbCls:'btn btn-green' },
+    stopped: { cls:'dot-closed',  txt:'Examen arrêté — accès bloqué',                  col:'var(--red)',    pbTxt:'⏸ Pause',    pbCls:'btn btn-pause' },
+    none:    { cls:'dot-waiting', txt:'Examen non publié — en attente',                col:'var(--gray)',   pbTxt:'⏸ Pause',    pbCls:'btn btn-pause' },
+  };
+  const c = cfg[s] || cfg.none;
+  dot.className = 'status-dot ' + c.cls;
+  lbl.textContent = c.txt;
+  lbl.style.color = c.col;
+  pb.textContent  = c.pbTxt;
+  pb.className    = c.pbCls;
+}
+
+async function publishExam() { if (confirm("Publier l'examen ? Les étudiants pourront commencer.")) await setStatus('open'); }
+async function stopExam()    { if (confirm("Arrêter l'examen définitivement ?"))                    await setStatus('stopped'); }
+async function resetExam()   { if (confirm("Remettre en état non ouvert ?"))                        await setStatus('none'); }
+async function pauseExam()   {
+  const s = await getStatus();
+  if (s === 'paused') { if (confirm("Reprendre l'examen ?")) await setStatus('open'); }
+  else                { if (confirm("Mettre en pause ?"))    await setStatus('paused'); }
+}
+
+// ── Copies via API ─────────────────────────────────────────────────
+async function loadCopies() {
+  try {
+    const res = await fetch(API_BASE + '/api/copies');
+    return await res.json();
+  } catch(e) { return []; }
+}
+
+async function loadAndRender() {
+  copies = await loadCopies();
+  await updateStats();
+  render();
+  updateStatusDisplay();
+}
+
+async function updateStats() {
+  try {
+    const res  = await fetch(API_BASE + '/api/stats');
+    const data = await res.json();
+    document.getElementById('stat-total').textContent = data.total;
+    document.getElementById('stat-avg').textContent   = data.total ? data.avg.toFixed(2) : '—';
+    document.getElementById('stat-max').textContent   = data.total ? data.max.toFixed(2) : '—';
+    document.getElementById('stat-min').textContent   = data.total ? data.min.toFixed(2) : '—';
+  } catch(e) {}
+}
+
+async function clearAllCopies() {
+  if (!confirm("Supprimer TOUTES les copies ? Irréversible.")) return;
+  try {
+    await fetch(API_BASE + '/api/copies/clear', { method: 'POST' });
+    loadAndRender();
+  } catch(e) { alert('Erreur lors de la suppression.'); }
+}
+
+async function deleteCopy(idx) {
+  if (!confirm("Supprimer cette copie ?")) return;
+  try {
+    await fetch(`/api/copies/${idx}`, { method: 'DELETE' });
+    loadAndRender();
+  } catch(e) { alert('Erreur lors de la suppression.'); }
+}
+
+// ── Rendu tableau ──────────────────────────────────────────────────
+function scoreClass(s) {
+  const p = s / 20;
+  return p >= 0.7 ? 'score-high' : p >= 0.5 ? 'score-mid' : 'score-low';
+}
+
+function render() {
+  const q   = document.getElementById('search').value.toLowerCase();
+  const fil = document.getElementById('filter-filiere').value;
+  const filtered = copies
+    .map((c, i) => ({...c, _idx: i}))
+    .filter(c => (c.name||'').toLowerCase().includes(q) || (c.matricule||'').toLowerCase().includes(q))
+    .filter(c => !fil || (c.filiere||'') === fil);
+
+  const tbody = document.getElementById('copies-body');
+  tbody.innerHTML = '';
+  document.getElementById('empty-state').style.display = filtered.length === 0 ? 'block' : 'none';
+
+  filtered.forEach((c, di) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-family:'IBM Plex Mono',monospace;color:var(--text-muted);font-size:12px;">${di+1}</td>
+      <td><strong>${c.name||'—'}</strong></td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:12px;">${c.matricule||'—'}</td>
+      <td style="font-size:12px;color:var(--text-muted);">${c.filiere||'—'}</td>
+      <td style="font-size:12px;color:var(--text-muted);">${c.group||'—'}</td>
+      <td style="font-size:12px;color:var(--text-muted);">${c.timestamp||'—'}</td>
+      <td><span class="score-pill ${scoreClass(c.score||0)}">${(c.score||0).toFixed(2)} / 20</span></td>
+      <td>
+        <button class="detail-btn" onclick="openModal(${c._idx})">Voir copie</button>
+        <button class="del-btn" onclick="deleteCopy(${c._idx})">✕</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// ── Modal ──────────────────────────────────────────────────────────
+function openModal(idx) {
+  const c = copies[idx]; if (!c) return;
+  currentModal = idx;
+  document.getElementById('modal-title').textContent = 'Copie de ' + c.name;
+
+  const detailHtml = (c.details || []).map((d, i) => {
+    const optsHtml = (d.opts || []).map(o => `
+      <div class="opt-row ${o.isCorrect ? 'opt-correct' : 'opt-wrong'}">
+        <span>${o.isCorrect ? '✓' : '✗'}</span>
+        <span>${o.txt}</span>
+        <span style="margin-left:auto;">Réponse : <strong>${o.given}</strong> (attendu : ${o.correct})</span>
+      </div>`).join('');
+    return `<div class="ans-row"><div class="ans-q">Q${i+1}. ${d.question}</div>${optsHtml}</div>`;
+  }).join('');
+
+  document.getElementById('modal-body').innerHTML = `
+    <div class="detail-section">
+      <h3>Informations étudiant</h3>
+      <div class="info-grid">
+        <div class="info-item"><span>Nom</span>${c.name||'—'}</div>
+        <div class="info-item"><span>Matricule</span>${c.matricule||'—'}</div>
+        <div class="info-item"><span>Filière</span>${c.filiere||'—'}</div>
+        <div class="info-item"><span>Groupe</span>${c.group||'—'}</div>
+        <div class="info-item"><span>Date soumission</span>${c.timestamp||'—'}</div>
+        <div class="info-item"><span>Score QCM</span><strong>${(c.score||0)} / 15</strong></div>
+        <div class="info-item"><span>Score total</span><strong>${(c.score||0)} / 20 (hors question ouverte)</strong></div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <h3>Réponses QCM (${(c.score||0)} / 15)</h3>
+      ${detailHtml || '<p style="color:var(--text-muted);font-size:13px;">Aucun détail disponible.</p>'}
+    </div>
+    <div class="detail-section">
+      <h3>Question ouverte — Lettre professionnelle (/ 5 pts · à corriger)</h3>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:13px;line-height:1.7;white-space:pre-wrap;">${c.openAnswer || '<em style="color:var(--text-muted);">Aucune réponse fournie.</em>'}</div>
+    </div>`;
+  document.getElementById('modal').style.display = 'block';
+}
+
+let currentModal = null;
+
+function closeModal() { document.getElementById('modal').style.display = 'none'; currentModal = null; }
+
+function downloadCopy(idx) {
+  const c = copies[idx]; if (!c) return;
+  const qcmLines = (c.details || []).map((d, i) =>
+    `Q${i+1}. ${d.question}\n   Réponse : ${d.given} | Correcte : ${d.correct} | ${d.isCorrect ? '✓' : '✗'}`
+  ).join('\n\n');
+
+  const txt = [
+    '══════════════════════════════════════════════',
+    '   EXAMEN — Techniques d\'Expression et de Communication',
+    '   Université Badji Mokhtar — Annaba | Faculté de Technologie',
+    '   Dr. N. E. A. DOGHMANE',
+    '══════════════════════════════════════════════',
+    '',
+    `Nom         : ${c.name || '—'}`,
+    `Matricule   : ${c.matricule || '—'}`,
+    `Filière     : ${c.filiere || '—'}`,
+    `Groupe      : ${c.group || '—'}`,
+    `Date        : ${c.timestamp || '—'}`,
+    `Score QCM   : ${c.score || 0} / 15`,
+    '',
+    '──────────────────────────────────────────────',
+    'PARTIE I — QCM (15 points)',
+    '──────────────────────────────────────────────',
+    '',
+    qcmLines,
+    '',
+    '──────────────────────────────────────────────',
+    'PARTIE II — Question ouverte (5 points · à corriger)',
+    '──────────────────────────────────────────────',
+    '',
+    c.openAnswer || '(Aucune réponse fournie)',
+    '',
+    '══════════════════════════════════════════════',
+  ].join('\n');
+
+  const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `copie_${(c.name||'etudiant').replace(/\s+/g,'_')}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── Export CSV ─────────────────────────────────────────────────────
+function exportCSV() {
+  window.location.href = API_BASE + '/api/export';
+}
+
+// ── Init + polling ─────────────────────────────────────────────────
+updateStatusDisplay();
+setInterval(loadAndRender, 3000);
+</script>
+</body>
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examen — Techniques d'Expression et de Communication</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+  :root{--blue:#1a56db;--blue-light:#e8f0fe;--green:#057a55;--green-light:#def7ec;--red:#c81e1e;--red-light:#fde8e8;--gray:#6b7280;--border:#e5e7eb;--bg:#f9fafb;--white:#ffffff;--text:#111827;--text-muted:#6b7280;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  header{background:var(--white);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;}
+  .logo{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:500;color:var(--blue);}
+  .timer-box{background:var(--blue-light);color:var(--blue);font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500;padding:5px 14px;border-radius:6px;}
+  .container{max-width:760px;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  .exam-header{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1.75rem 2rem;margin-bottom:1.5rem;}
+  .exam-header h1{font-size:20px;font-weight:600;margin-bottom:8px;}
+  .meta-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem;}
+  .meta-chip{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:12px;color:var(--text-muted);}
+  .meta-chip strong{color:var(--text);}
+  .consignes{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;font-size:13px;color:#1e40af;line-height:1.7;}
+  .consignes li{margin-left:16px;}
+  .student-form{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1.5rem 2rem;margin-bottom:1.5rem;}
+  .student-form h2{font-size:13px;font-weight:600;margin-bottom:1rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);}
+  .form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
+  .form-group label{font-size:12px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;}
+  .form-group input[type=text]{height:40px;border:1px solid var(--border);border-radius:8px;padding:0 12px;font-size:14px;font-family:'IBM Plex Sans',sans-serif;color:var(--text);background:var(--white);}
+  .form-group input[type=text]:focus{outline:none;border-color:var(--blue);}
+  .filieres-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;}
+  .filiere-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:12px;transition:all .12s;}
+  .filiere-item:hover{border-color:#93c5fd;background:#eff6ff;}
+  .filiere-item input[type=radio]{accent-color:var(--blue);flex-shrink:0;}
+  .filiere-item.sel{border-color:var(--blue);background:var(--blue-light);}
+  .progress-section{margin-bottom:1.5rem;}
+  .progress-info{display:flex;justify-content:space-between;font-size:13px;color:var(--text-muted);margin-bottom:6px;}
+  .progress-track{height:4px;background:var(--border);border-radius:2px;}
+  .progress-bar{height:100%;background:var(--blue);border-radius:2px;transition:width .3s ease;}
+  .section-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+  .section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+  .q-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;display:none;}
+  .q-card.active{display:block;}
+  .q-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;}
+  .q-badge{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;background:var(--blue-light);color:var(--blue);padding:2px 8px;border-radius:4px;white-space:nowrap;flex-shrink:0;margin-top:2px;}
+  .q-text{font-size:14px;line-height:1.6;font-weight:500;}
+  .vf-label{font-size:12px;color:var(--text-muted);margin-bottom:8px;font-style:italic;}
+  .options{display:flex;flex-direction:column;gap:7px;}
+  .opt-label{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;transition:all .12s;user-select:none;}
+  .opt-label:hover{border-color:#93c5fd;background:#eff6ff;}
+  .opt-label input[type=checkbox]{accent-color:var(--blue);width:16px;height:16px;flex-shrink:0;}
+  .opt-label.sel{border-color:var(--blue);background:var(--blue-light);}
+  .opt-letter{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-muted);font-weight:500;min-width:16px;}
+  .vf-options{display:flex;gap:10px;}
+  .vf-opt{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;transition:all .12s;}
+  .vf-opt:hover{background:var(--bg);}
+  .vf-opt input[type=radio]{display:none;}
+  .vf-opt.vrai.sel{border-color:var(--green);background:var(--green-light);color:var(--green);}
+  .vf-opt.faux.sel{border-color:var(--red);background:var(--red-light);color:var(--red);}
+  .q-nav{display:flex;justify-content:flex-end;margin-top:16px;}
+  .next-btn{background:var(--blue);color:white;border:none;border-radius:8px;padding:9px 22px;font-family:'IBM Plex Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;}
+  .next-btn:hover{background:#1741b0;}
+  .next-btn:disabled{background:var(--gray);cursor:not-allowed;}
+  .submit-btn{width:100%;height:48px;background:var(--blue);color:white;border:none;border-radius:10px;font-family:'IBM Plex Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:1.5rem;}
+  .submit-btn:hover{background:#1741b0;}
+  .submit-btn:disabled{background:var(--gray);cursor:not-allowed;}
+  .success-screen{display:none;text-align:center;background:var(--white);border:1px solid #a7f3d0;border-radius:12px;padding:3rem 2rem;margin-top:2rem;}
+  .score-display{font-family:'IBM Plex Mono',monospace;font-size:36px;font-weight:500;color:var(--blue);margin:1rem 0;}
+  .splash-overlay{position:fixed;inset:0;background:rgba(17,24,39,.75);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem;}
+  .splash-card{background:var(--white);border-radius:16px;max-width:500px;width:100%;padding:2.5rem 2rem;text-align:center;}
+  .splash-card h2{font-size:20px;font-weight:600;margin-bottom:8px;}
+  .splash-card p{font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:1.25rem;}
+  .splash-rules{text-align:left;background:var(--bg);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.25rem;}
+  .splash-rules li{font-size:13px;color:var(--text);line-height:1.8;list-style:none;display:flex;gap:8px;}
+  .splash-rules li::before{content:'→';color:var(--blue);flex-shrink:0;}
+  .splash-timer{font-family:'IBM Plex Mono',monospace;font-size:38px;font-weight:500;color:var(--blue);margin-bottom:4px;}
+  .splash-timer-lbl{font-size:12px;color:var(--text-muted);margin-bottom:1.25rem;}
+  .splash-status{font-size:13px;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:6px;visibility:hidden;}
+  .splash-status-dot{width:8px;height:8px;border-radius:50%;background:#9ca3af;flex-shrink:0;}
+  .splash-status.open{color:var(--green);}
+  .splash-status.open .splash-status-dot{background:var(--green);box-shadow:0 0 0 3px rgba(5,122,85,.2);}
+  .start-btn{width:100%;height:52px;background:#9ca3af;color:white;border:none;border-radius:10px;font-family:'IBM Plex Sans',sans-serif;font-size:16px;font-weight:600;cursor:not-allowed;transition:background .3s;}
+  .start-btn.ready{background:var(--blue);cursor:pointer;}
+  .start-btn.ready:hover{background:#1741b0;}
+  .blocked-overlay{display:none;position:fixed;inset:0;background:rgba(17,24,39,.92);z-index:600;align-items:center;justify-content:center;text-align:center;padding:2rem;}
+  .blocked-card{background:var(--white);border-radius:16px;padding:2.5rem 2rem;max-width:420px;width:100%;}
+  .blocked-card h2{font-size:20px;font-weight:600;color:var(--red);margin-bottom:10px;}
+  .blocked-card p{font-size:14px;color:var(--text-muted);line-height:1.6;}
+  .blocked-card a{color:var(--blue);text-decoration:none;font-weight:500;}
+  @media(max-width:600px){.filieres-grid{grid-template-columns:1fr;}.container{padding:1rem 1rem 3rem;}}
+</style>
+</head>
+<body>
+
+<!-- Splash -->
+<div class="splash-overlay" id="splash">
+  <div class="splash-card">
+    <div style="font-size:40px;margin-bottom:12px;">📋</div>
+    <h2>Examen — Techniques d'Expression et de Communication</h2>
+    <p>Lisez attentivement les consignes avant de commencer.</p>
+    <div class="splash-rules"><ul>
+      <li>15 questions QCM — 1 point chacune (15 pts)</li>
+      <li>1 question ouverte — 5 points</li>
+      <li>Total : 20 points</li>
+      <li>Une question à la fois — pas de retour en arrière</li>
+      <li>Le minuteur démarre dès que vous cliquez Commencer</li>
+    </ul></div>
+    <div class="splash-timer">90:00</div>
+    <div class="splash-timer-lbl">Durée de l'examen</div>
+    <div class="splash-status" id="splash-status">
+      <span class="splash-status-dot"></span>
+      <span id="splash-status-text"></span>
+    </div>
+    <button class="start-btn" id="start-btn" onclick="startExam()" disabled>Commencer l'examen</button>
+  </div>
+</div>
+
+<!-- Bloqué -->
+<div class="blocked-overlay" id="blocked-screen">
+  <div class="blocked-card">
+    <div style="font-size:40px;margin-bottom:12px;">🔒</div>
+    <h2 id="blocked-title">Examen terminé</h2>
+    <p id="blocked-msg">L'enseignant a mis fin à l'examen. Si vous n'avez pas encore soumis votre copie, veuillez contacter votre enseignant immédiatement à : <a href="mailto:Nea_doghmane@yahoo.com">Nea_doghmane@yahoo.com</a></p>
+  </div>
+</div>
+
+
+<div style="background:#fff;border-bottom:3px solid #1a56db;padding:14px 2rem;display:flex;align-items:center;gap:1.5rem;">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Badji_Mokhtar_Annaba_University_logo.svg/120px-Badji_Mokhtar_Annaba_University_logo.svg.png" 
+       onerror="this.style.display='none'"
+       style="height:64px;width:auto;flex-shrink:0;" alt="Logo UBMA"/>
+  <div style="font-family:'IBM Plex Sans',sans-serif;line-height:1.5;">
+    <div style="font-size:15px;font-weight:700;color:#1a56db;">Badji Mokhtar Annaba University</div>
+    <div style="font-size:13px;font-weight:600;color:#111827;">Faculty of Technology</div>
+    <div style="font-size:13px;color:#374151;">TC Sciences et Technologie &mdash; 2&egrave;me Ann&eacute;e</div>
+    <div style="font-size:13px;color:#6b7280;font-style:italic;">Dr. N. E. A. DOGHMANE</div>
+  </div>
+</div>
+<header>
+  <div class="logo">EXAM · TEC</div>
+  <div class="timer-box" id="timer">90:00</div>
+</header>
+
+<div class="container">
+  <div class="exam-header">
+    <h1>Examen — Techniques d'Expression et de Communication</h1>
+    <div class="meta-row">
+      <div class="meta-chip"><strong>15</strong> questions QCM · 1 pt chacune</div>
+      <div class="meta-chip"><strong>1</strong> question ouverte · 5 pts</div>
+      <div class="meta-chip"><strong>20</strong> points au total</div>
+      <div class="meta-chip"><strong>60</strong> minutes</div>
+    </div>
+    <div class="consignes">
+      <ul>
+        <li>Choisissez la bonne réponse parmi les propositions (A, B, C, D)</li>
+        <li>Une question à la fois — vous ne pouvez pas revenir en arrière</li>
+        <li>Vous ne pouvez rien modifier après avoir soumis</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Infos étudiant -->
+  <div class="student-form">
+    <h2>Informations de l'étudiant</h2>
+    <div class="form-group">
+      <label>Nom complet *</label>
+      <input type="text" id="s-name" placeholder="Nom et prénom"/>
+    </div>
+    <div class="form-group">
+      <label>Matricule (N° carte étudiant) *</label>
+      <input type="text" id="s-matricule" placeholder="Ex : 202300123"/>
+    </div>
+    <div class="form-group">
+      <label>Filière *</label>
+      <div class="filieres-grid" id="filieres-grid">
+        <label class="filiere-item" onclick="selectFiliere(this)"><input type="radio" name="filiere" value="AUTOMATIQUE"/> AUTOMATIQUE</label>
+        <label class="filiere-item" onclick="selectFiliere(this)"><input type="radio" name="filiere" value="ELECTRONIQUE"/> ELECTRONIQUE</label>
+        <label class="filiere-item" onclick="selectFiliere(this)"><input type="radio" name="filiere" value="TELECOMMUNICATION"/> TELECOMMUNICATION</label>
+        <label class="filiere-item" onclick="selectFiliere(this)"><input type="radio" name="filiere" value="ELECTROTECHNIQUE"/> ELECTROTECHNIQUE</label>
+        <label class="filiere-item" onclick="selectFiliere(this)"><input type="radio" name="filiere" value="ELECTROMECANIQUE"/> ELECTROMECANIQUE</label>
+        <label class="filiere-item" onclick="selectFiliere(this)"><input type="radio" name="filiere" value="GENIE CIVIL"/> GENIE CIVIL</label>
+        <label class="filiere-item" onclick="selectFiliere(this)"><input type="radio" name="filiere" value="GENIE MECANIQUE"/> GENIE MECANIQUE</label>
+        <label class="filiere-item" onclick="selectFiliere(this)"><input type="radio" name="filiere" value="HYDRAULIQUE"/> HYDRAULIQUE</label>
+        <label class="filiere-item" onclick="selectFiliere(this)"><input type="radio" name="filiere" value="HYGIENE ET SECURITE INDUSTRIELLE"/> HYGIENE ET SECURITE INDUSTRIELLE</label>
+        <label class="filiere-item" onclick="selectFiliere(this)"><input type="radio" name="filiere" value="GENIE DES PROCEDES"/> GENIE DES PROCEDES INDUSTRIES PETROCHIMIQUES</label>
+        <label class="filiere-item" onclick="selectFiliere(this)"><input type="radio" name="filiere" value="METALLURGIE"/> METALLURGIE</label>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Groupe *</label>
+      <input type="text" id="s-group" placeholder="Ex : Groupe 1"/>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-section">
+    <div class="progress-info">
+      <span id="prog-text">Question 1 / 15</span>
+      <span id="prog-pct">0%</span>
+    </div>
+    <div class="progress-track"><div class="progress-bar" id="prog-bar" style="width:0%"></div></div>
+  </div>
+
+  <div class="section-label">Partie I — QCM (15 points)</div>
+  <div id="qcm-list"></div>
+
+  <!-- Partie II — Question ouverte -->
+  <div id="open-section" style="display:none;margin-top:1.5rem;">
+    <div class="section-label">Partie II — Question ouverte (5 points)</div>
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1.5rem;">
+      <div style="background:#fef3c7;color:#92400e;font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px;display:inline-block;margin-bottom:10px;">Q16 · 5 points</div>
+      <div style="font-size:14px;line-height:1.7;margin-bottom:1rem;">
+        <strong>Exercice (Chapitre 2) :</strong><br><br>
+        Rédigez une <strong>lettre professionnelle</strong> adressée au Président Directeur Général (PDG) du complexe sidérurgique <em>Sider El Hadjar</em> d'Annaba pour solliciter un stage au sein du complexe.<br><br>
+        Votre lettre doit :<br>
+        &nbsp;&nbsp;<strong>(1)</strong> Respecter la structure officielle d'une lettre professionnelle (en-tête, objet, introduction, développement, conclusion, formule de politesse).<br>
+        &nbsp;&nbsp;<strong>(2)</strong> Contenir des arguments solides et convaincants pour obtenir ce stage.<br>
+        &nbsp;&nbsp;<strong>(3)</strong> Être rédigée dans un langage clair, formel et adapté au destinataire.
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;padding:8px 12px;background:var(--bg);border-radius:6px;border-left:3px solid var(--border);">
+        Respectez la mise en forme d'une lettre officielle. La structure, le contenu et la qualité de la langue seront évalués.
+      </div>
+      <textarea id="open-ans" placeholder="Rédigez votre lettre ici : en-tête, objet, introduction, développement avec arguments, conclusion et formule de politesse..." style="width:100%;min-height:200px;border:1px solid var(--border);border-radius:8px;padding:12px;font-size:14px;font-family:'IBM Plex Sans',sans-serif;color:var(--text);resize:vertical;line-height:1.6;"></textarea>
+      <div style="margin-top:1rem;">
+        <button class="next-btn" onclick="submitExam()" style="width:100%;">Soumettre l'examen →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="success-screen" id="success-screen">
+    <div style="font-size:48px;margin-bottom:1rem;">✓</div>
+    <h2 style="font-size:22px;font-weight:600;color:var(--green);margin-bottom:8px;">Copie soumise avec succès !</h2>
+    <p id="success-msg" style="font-size:14px;color:var(--text-muted);line-height:1.6;"></p>
+  </div>
+</div>
+
+<script>
+const API_BASE = 'https://examen-jhpf.onrender.com'; // ← Remplacez par votre URL Render
+const QCM = [
+  { q: "Q1. Quelle méthode est recommandée pour analyser un sujet de recherche documentaire en posant des questions sur les besoins informationnels ?", opts: ["La méthode IMRAD", "La méthode 3QPOC", "La recherche booléenne", "La lecture rapide"], ans: 1 },
+  { q: "Q2. La recherche booléenne utilise des opérateurs logiques. Lequel des exemples suivants est correct ?", opts: ["diodes + redressement", "diodes 3QPOC redressement", "diodes ET redressement", "diodes / redressement"], ans: 2 },
+  { q: "Q3. Parmi les outils suivants, lequel est une base de données bibliographique spécialisée donnant accès à des articles scientifiques ?", opts: ["Google Chrome", "ScienceDirect", "Microsoft Word", "Wikipedia"], ans: 1 },
+  { q: "Q4. La technique de lecture rapide comprend trois principes. Lequel ne fait PAS partie de ces principes ?", opts: ["Le survol", "Le repérage", "L'écrémage", "La mémorisation"], ans: 3 },
+  { q: "Q5. Pourquoi est-il essentiel de constituer une documentation bibliographique ?", opts: ["Pour éviter de faire des recherches", "Pour centraliser les informations et respecter les droits d'auteur", "Pour remplacer les livres de cours", "Pour utiliser uniquement des sources internet"], ans: 1 },
+  { q: "Q6. Dans le schéma de communication, quel élément désigne le retour d'information du récepteur vers l'émetteur ?", opts: ["Le canal", "Le bruit", "Le feedback", "Le message"], ans: 2 },
+  { q: "Q7. Selon les catégories de communication, quel élément a le plus grand impact sur la communication (55%) ?", opts: ["Les mots", "Les intonations (langage)", "Les gestes", "Le feedback"], ans: 2 },
+  { q: "Q8. Un message écrit doit être organisé en trois parties. Quel est l'ordre correct ?", opts: ["Conclusion, Développement, Introduction", "Introduction, Développement, Conclusion", "Développement, Introduction, Conclusion", "Introduction, Conclusion, Développement"], ans: 1 },
+  { q: "Q9. Pour préparer un exposé oral, quelle structure est recommandée pour garantir la clarté ?", opts: ["La méthode 3QPOC", "La structure IMRAD", "La méthode booléenne", "La lecture rapide"], ans: 0 },
+  { q: "Q10. La communication formelle se distingue de la communication informelle par :", opts: ["Elle est toujours orale", "Ses objectifs, canaux et supports sont prévus et définis à l'avance", "Elle se fait uniquement par écrit", "Elle est spontanée et non organisée"], ans: 1 },
+  { q: "Q11. Selon le chapitre 3, qu'est-ce que le 'statut' dans une situation de communication ?", opts: ["La manière de parler d'une personne", "La position attribuée à un individu au sein d'un groupe", "Le lieu où se déroule la communication", "Le message transmis entre deux personnes"], ans: 1 },
+  { q: "Q12. Parmi les conseils pour améliorer la communication en face à face, lequel est cité dans le cours ?", opts: ["Parler rapidement sans s'arrêter", "Regarder les personnes dans les yeux", "Éviter de poser des questions", "Utiliser uniquement des gestes"], ans: 1 },
+  { q: "Q13. Combien de stratégies sont présentées pour améliorer la communication au sein d'une équipe (chapitre 3) ?", opts: ["3", "4", "5", "6"], ans: 2 },
+  { q: "Q14. La 'politique de la porte ouverte' dans la communication en groupe vise à :", opts: ["Fermer les bureaux pour plus de concentration", "Favoriser un espace de travail ouvert et éliminer les obstacles de communication", "Interdire les réunions informelles", "Réduire les échanges entre collaborateurs"], ans: 1 },
+  { q: "Q15. La communication interpersonnelle est définie comme :", opts: ["Un échange de documents écrits entre plusieurs groupes", "Un processus crucial qui se produit entre deux individus, en personne ou à distance", "Une présentation orale devant un grand auditoire", "Un message audiovisuel diffusé à la télévision"], ans: 1 }
+];
+
+const userAnswers = new Array(15).fill(null);
+let currentQ = 0;
+let timerInterval = null;
+let seconds = 90 * 60;
+let examStarted = false;
+
+// ── Filière ───────────────────────────────────────────────────────
+function selectFiliere(el) {
+  document.querySelectorAll('.filiere-item').forEach(f => f.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+// ── Statut examen via API ─────────────────────────────────────────
+async function checkExamStatus() {
+  try {
+    const res = await fetch(API_BASE + '/api/status');
+    const data = await res.json();
+    const status = data.status || 'none';
+    const btn = document.getElementById('start-btn');
+    const ss  = document.getElementById('splash-status');
+    const st  = document.getElementById('splash-status-text');
+    if (status === 'open') {
+      btn.disabled = false; btn.classList.add('ready');
+      ss.style.visibility = 'visible'; ss.className = 'splash-status open';
+      st.textContent = 'Examen ouvert — vous pouvez commencer';
+      document.getElementById('blocked-screen').style.display = 'none';
+    } else if (status === 'paused') {
+      btn.disabled = true; btn.classList.remove('ready');
+      ss.style.visibility = 'hidden';
+      if (examStarted) {
+        document.getElementById('blocked-screen').style.display = 'flex';
+        document.getElementById('blocked-title').textContent = 'Examen en pause';
+        document.getElementById('blocked-msg').innerHTML = "L'enseignant a mis l'examen en pause. Veuillez patienter.";
+      }
+    } else if (status === 'stopped') {
+      btn.disabled = true; btn.classList.remove('ready');
+      ss.style.visibility = 'hidden';
+      document.getElementById('blocked-screen').style.display = 'flex';
+      document.getElementById('blocked-title').textContent = 'Examen terminé';
+      document.getElementById('blocked-msg').innerHTML = "L'enseignant a mis fin à l'examen. Contactez : <a href='mailto:Nea_doghmane@yahoo.com'>Nea_doghmane@yahoo.com</a>";
+    } else {
+      btn.disabled = true; btn.classList.remove('ready');
+      ss.style.visibility = 'hidden';
+    }
+  } catch(e) {
+    console.warn('Serveur inaccessible', e);
+  }
+}
+setInterval(checkExamStatus, 2000);
+checkExamStatus();
+
+function startExam() {
+  document.getElementById('splash').style.display = 'none';
+  examStarted = true;
+  showQuestion(0);
+  timerInterval = setInterval(updateTimer, 1000);
+}
+
+// ── Construction des questions QCM ───────────────────────────────
+function buildQCM() {
+  const list = document.getElementById('qcm-list');
+  QCM.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'q-card' + (i === 0 ? ' active' : '');
+    card.id = 'qcard-' + i;
+    const optsHtml = item.opts.map((o, j) => `
+      <label class="opt-label" id="optlbl-${i}-${j}" onclick="pickAnswer(${i},${j})">
+        <span class="opt-letter">${['A','B','C','D'][j]}</span>
+        <span>${o}</span>
+      </label>`).join('');
+    card.innerHTML = `
+      <div class="q-top">
+        <span class="q-badge">Q${i+1} · 1 pt</span>
+        <span class="q-text">${item.q}</span>
+      </div>
+      <div class="options">${optsHtml}</div>
+      <div class="q-nav">
+        <button class="next-btn" id="next-${i}" onclick="nextQuestion(${i})">
+          ${i < 14 ? 'Question suivante →' : 'Partie II : Question ouverte →'}
+        </button>
+      </div>`;
+    list.appendChild(card);
+  });
+}
+
+function pickAnswer(qi, oi) {
+  userAnswers[qi] = oi;
+  for (let j = 0; j < 4; j++) {
+    const lbl = document.getElementById(`optlbl-${qi}-${j}`);
+    if (lbl) { lbl.style.borderColor = ''; lbl.style.background = ''; }
+  }
+  const sel = document.getElementById(`optlbl-${qi}-${oi}`);
+  if (sel) { sel.style.borderColor = 'var(--blue)'; sel.style.background = 'var(--blue-light)'; }
+}
+
+function showQuestion(i) {
+  document.querySelectorAll('.q-card').forEach(c => c.classList.remove('active'));
+  const card = document.getElementById('qcard-' + i);
+  if (card) { card.classList.add('active'); card.scrollIntoView({behavior:'smooth',block:'center'}); }
+  currentQ = i;
+  const pct = Math.round(((i) / 16) * 100);
+  document.getElementById('prog-text').textContent = `Question ${i + 1} / 15`;
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-bar').style.width = pct + '%';
+}
+
+function nextQuestion(qi) {
+  if (qi < 14) {
+    showQuestion(qi + 1);
+  } else {
+    // Show open question section
+    document.getElementById('qcm-list').style.display = 'none';
+    document.getElementById('open-section').style.display = 'block';
+    document.getElementById('prog-text').textContent = 'Question ouverte';
+    document.getElementById('prog-pct').textContent = '94%';
+    document.getElementById('prog-bar').style.width = '94%';
+    document.getElementById('open-section').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+}
+
+// ── Soumettre via API ─────────────────────────────────────────────
+async function submitExam() {
+  const name      = document.getElementById('s-name').value.trim();
+  const matricule = document.getElementById('s-matricule').value.trim();
+  const filiereEl = document.querySelector('input[name=filiere]:checked');
+  const group     = document.getElementById('s-group').value.trim();
+  const openAns   = document.getElementById('open-ans').value.trim();
+
+  if (!name || !matricule || !filiereEl) { alert('Informations étudiant incomplètes.'); return; }
+  if (!openAns) { if (!confirm('La question ouverte est vide. Soumettre quand même ?')) return; }
+
+  let score = 0;
+  const details = QCM.map((item, i) => {
+    const correct = userAnswers[i] === item.ans;
+    if (correct) score += 1;
+    return {
+      question: item.q,
+      given: userAnswers[i] !== null ? item.opts[userAnswers[i]] : 'Sans réponse',
+      correct: item.opts[item.ans],
+      isCorrect: correct
+    };
+  });
+
+  const record = {
+    name, matricule, filiere: filiereEl.value, group,
+    score: score,
+    qcmTotal: 15,
+    openAnswer: openAns,
+    total: 20,
+    details,
+    timestamp: new Date().toLocaleString('fr-FR')
+  };
+
+  try {
+    const res = await fetch(API_BASE + '/api/copies', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(record)
+    });
+    if (!res.ok) throw new Error('Erreur serveur');
+  } catch(e) {
+    alert('Erreur de soumission. Vérifiez votre connexion ou contactez : Nea_doghmane@yahoo.com');
+    return;
+  }
+
+  if (timerInterval) clearInterval(timerInterval);
+  document.getElementById('open-section').style.display = 'none';
+  document.getElementById('prog-text').textContent = 'Terminé';
+  document.getElementById('prog-bar').style.width = '100%';
+  document.getElementById('prog-pct').textContent = '100%';
+  document.getElementById('success-msg').textContent = `Copie de ${name} (${filiereEl.value} — ${group}) enregistrée avec succès. Score QCM : ${score}/15. Votre enseignant corrigera la question ouverte (5 pts).`;
+  document.getElementById('success-screen').style.display = 'block';
+  document.getElementById('success-screen').scrollIntoView({ behavior: 'smooth' });
+}
+
+buildQCM();
+</script>
+</body>
+</html>
