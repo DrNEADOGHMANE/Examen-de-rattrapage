@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: Examen-de-remplacement-2
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
+    envVars:
+      - key: DB_PATH
+        value: /data/exam_data.db
+    disk:
+      name: exam-disk
+      mountPath: /data
+      sizeGB: 1
