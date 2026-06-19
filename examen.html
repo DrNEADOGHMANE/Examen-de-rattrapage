@@ -290,14 +290,14 @@ async function checkExamStatus() {
       if (examStarted) {
         document.getElementById('blocked-screen').style.display = 'flex';
         document.getElementById('blocked-title').textContent = 'Examen en pause';
-        document.getElementById('blocked-msg').innerHTML = "L'enseignant a mis l'examen en pause. Veuillez patienter.";
+        document.getElementById('blocked-msg').innerHTML = "L'enseignante a mis l'examen en pause. Veuillez patienter.";
       }
     } else if (status === 'stopped') {
       btn.disabled = true; btn.classList.remove('ready');
       ss.style.visibility = 'hidden';
       document.getElementById('blocked-screen').style.display = 'flex';
       document.getElementById('blocked-title').textContent = 'Examen terminé';
-      document.getElementById('blocked-msg').innerHTML = "L'enseignant a mis fin à l'examen. Contactez : <a href='mailto:Nea_doghmane@yahoo.com'>Nea_doghmane@yahoo.com</a>";
+      document.getElementById('blocked-msg').innerHTML = "L'enseignante a mis fin à l'examen. Contactez : <a href='mailto:Nea_doghmane@yahoo.com'>Nea_doghmane@yahoo.com</a>";
     } else {
       btn.disabled = true; btn.classList.remove('ready');
       ss.style.visibility = 'hidden';
